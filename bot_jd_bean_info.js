@@ -25,10 +25,13 @@ if ($.isNode()) {
 
 let intcheckckseq=999999;
 let strcheckck = process.env.BOTCHECKCODE;
-
+let lnShowTop = 0;
 if(!strcheckck){
-	console.log("【账号🆔】没有获取到要查询的账号");
+	console.log("【账号�】没有获取到要查询的账号");
 	return
+}
+if ($.isNode() && process.env.BOTShowTopNum) {
+	lnShowTop = parseInt(process.env.BOTShowTopNum);	
 }
 
 for (i = 0; i < cookiesArr.length; i++) {
@@ -99,9 +102,15 @@ console.log("当前查询的CK序号是:"+(intcheckckseq+1));
 async function showMsg() {
   if ($.errorMsg) return
   
-  for (let key of myMap.keys()) {
+  var arrayObj=Array.from(myMap);
+  arrayObj.sort(function(a,b){return a[1]-b[1]})
+  if(lnShowTop)
+	  allMessage += "【设定了隐藏" +lnShowTop+"豆以下的信息"+"】 "+'\n'
+  for (var [key, value] of arrayObj) {
     /* allMessage += key + ' ---> ' +myMap.get(key)+'京豆\n' */
-	allMessage += "【" +myMap.get(key)+"豆"+"】 "+key+'\n'
+	if(lnShowTop && lnShowTop>value)
+		continue;
+	allMessage += "【" +value+"豆"+"】 "+key+'\n'
   }
 }
 function IsNumber(value) {
